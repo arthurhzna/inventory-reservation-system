@@ -9,5 +9,6 @@ type UnitOfWork interface {
 		ctx context.Context,
 		fn func(UnitOfWork) error,
 	) error
-	UserRepository() UserRepository
+	InventoryRepository() InventoryRepository
+	ReservationRepository() ReservationRepository
 }

@@ -1,3 +1,9 @@
+CREATE TYPE reservation_status AS ENUM (
+    'ACTIVE',
+    'CONFIRMED',
+    'EXPIRED'
+);
+
 CREATE TABLE reservations (
 
     id BIGSERIAL PRIMARY KEY,
@@ -10,7 +16,7 @@ CREATE TABLE reservations (
 
     quantity INTEGER NOT NULL CHECK (quantity > 0),
 
-    status VARCHAR(20) NOT NULL,
+    status reservation_status NOT NULL,
 
     expires_at TIMESTAMP NOT NULL,
 
@@ -26,7 +32,7 @@ CREATE TABLE reservations (
         ON DELETE CASCADE
 );
 
-CREATE INDEX idx_reservation_uuid
+CREATE UNIQUE INDEX idx_reservation_uuid
 ON reservations(reservation_id);
 
 CREATE INDEX idx_reservation_status
