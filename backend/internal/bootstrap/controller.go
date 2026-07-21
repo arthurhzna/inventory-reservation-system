@@ -5,8 +5,8 @@ import (
 )
 
 type Controller struct {
-	AppController  *controller.AppController
-	UserController *controller.UserController
+	AppController       *controller.AppController
+	InventoryController *controller.InventoryController
 }
 
 func NewController(
@@ -15,8 +15,8 @@ func NewController(
 	return &Controller{
 		AppController: controller.NewAppController(),
 
-		UserController: controller.NewUserController(
-			useCase.UserUseCase,
+		InventoryController: controller.NewInventoryController(
+			useCase.InventoryUseCase,
 		),
 	}
 }

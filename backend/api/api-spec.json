@@ -1,19 +1,256 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Inventory Reservation System",
+    "title": "Inventory Reservation System API",
     "version": "1.0.0",
-    "description": ""
+    "description": "High Throughput Inventory Reservation System"
   },
   "servers": [
     {
       "url": "http://localhost:8000"
     }
   ],
-  "tags": [],
-  "paths": {},
+  "tags": [
+    {
+      "name": "Inventory"
+    }
+  ],
+  "paths": {
+    "/api/v1/inventory": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "List inventory",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v1/inventory/stock": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Get inventory stock",
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "item_001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Inventory not found"
+          }
+        }
+      }
+    },
+    "/api/v1/inventory/reserve": {
+      "post": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Reserve inventory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReserveInventoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reservation created"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Inventory not found"
+          },
+          "409": {
+            "description": "Insufficient stock"
+          }
+        }
+      }
+    },
+    "/api/v1/inventory/confirm": {
+      "post": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Confirm reservation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmReservationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation confirmed"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Reservation not found"
+          },
+          "409": {
+            "description": "Reservation already confirmed"
+          },
+          "410": {
+            "description": "Reservation expired"
+          }
+        }
+      }
+    }
+  },
   "components": {
-    "schemas": {},
+    "schemas": {
+      "ReserveInventoryRequest": {
+        "type": "object",
+        "required": [
+          "user_id",
+          "item_id",
+          "quantity"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "example": "user_001"
+          },
+          "item_id": {
+            "type": "string",
+            "example": "item_001"
+          },
+          "quantity": {
+            "type": "integer",
+            "example": 2
+          }
+        }
+      },
+      "ConfirmReservationRequest": {
+        "type": "object",
+        "required": [
+          "reservation_id"
+        ],
+        "properties": {
+          "reservation_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "1d28950e-3193-4ce1-9b4d-a2fb944a318d"
+          }
+        }
+      },
+      "ReserveInventoryResponse": {
+        "type": "object",
+        "properties": {
+          "reservation_id": {
+            "type": "string"
+          },
+          "item_id": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ConfirmReservationResponse": {
+        "type": "object",
+        "properties": {
+          "reservation_id": {
+            "type": "string"
+          },
+          "confirmed_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "InventoryResponse": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "string"
+          },
+          "item_name": {
+            "type": "string"
+          },
+          "total_stock": {
+            "type": "integer"
+          },
+          "reserved_stock": {
+            "type": "integer"
+          },
+          "available_stock": {
+            "type": "integer"
+          }
+        }
+      },
+      "InventoryListResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryResponse"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "responses": {},
     "parameters": {}
   }

@@ -33,6 +33,10 @@ type InventoryUseCaseInterface interface {
 	ListInventory(
 		ctx context.Context,
 	) (*response.InventoryListResponse, error)
+
+	ExpireReservation(
+		ctx context.Context,
+	) error
 }
 
 type InventoryUseCase struct {
@@ -142,13 +146,16 @@ func (u *InventoryUseCase) Confirm(
 	req *request.ConfirmReservationRequest,
 ) (*response.ConfirmReservationResponse, error) {
 
-	var reservation *entity.Reservation
+	var (
+		reservation *entity.Reservation
+		err         error
+	)
 
-	err := u.uow.WithTransaction(
+	err = u.uow.WithTransaction(
 		ctx,
 		func(txUow repositoryinterface.UnitOfWork) error {
 
-			reservation, err := txUow.
+			reservation, err = txUow.
 				ReservationRepository().
 				FindByReservationIDForUpdate(
 					ctx,
@@ -301,4 +308,108 @@ func (u *InventoryUseCase) ListInventory(
 	return &response.InventoryListResponse{
 		Items: items,
 	}, nil
+}
+
+func (u *InventoryUseCase) ExpireReservation(
+	ctx context.Context,
+) error {
+
+	reservations, err := u.uow.
+		ReservationRepository().
+		FindExpiredActive(
+			ctx,
+			100,
+		)
+
+	if err != nil {
+		return err
+	}
+
+	for _, reservation := range reservations {
+
+		reservationID := reservation.ReservationID
+
+		err := u.uow.WithTransaction(
+			ctx,
+			func(txUow repositoryinterface.UnitOfWork) error {
+
+				reservation, err := txUow.
+					ReservationRepository().
+					FindByReservationIDForUpdate(
+						ctx,
+						reservationID,
+					)
+
+				if err != nil {
+					return err
+				}
+
+				if reservation == nil {
+					return nil
+				}
+
+				if reservation.Status != entity.ReservationStatusActive {
+					return nil
+				}
+
+				inventory, err := txUow.
+					InventoryRepository().
+					FindByIDForUpdate(
+						ctx,
+						reservation.InventoryID,
+					)
+
+				if err != nil {
+					return err
+				}
+
+				if inventory == nil {
+					return nil
+				}
+
+				inventory.ReservedStock -= reservation.Quantity
+
+				if inventory.ReservedStock < 0 {
+					inventory.ReservedStock = 0
+				}
+
+				now := time.Now().UTC()
+
+				inventory.UpdatedAt = now
+
+				err = txUow.
+					InventoryRepository().
+					Update(
+						ctx,
+						inventory,
+					)
+
+				if err != nil {
+					return err
+				}
+
+				reservation.Status = entity.ReservationStatusExpired
+				reservation.UpdatedAt = now
+
+				err = txUow.
+					ReservationRepository().
+					Update(
+						ctx,
+						reservation,
+					)
+
+				if err != nil {
+					return err
+				}
+
+				return nil
+			},
+		)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

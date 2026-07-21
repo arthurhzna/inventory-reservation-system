@@ -74,9 +74,10 @@ migrate-reset:
 	-verbose up
 
 seed:
-	@psql "${DB_URL}" -f ${CURDIR}/db/seed/001_role.sql
-	@psql "${DB_URL}" -f ${CURDIR}/db/seed/002_admin.sql
-	@psql "${DB_URL}" -f ${CURDIR}/db/seed/003_device.sql
+	@set -e; \
+	for file in $(CURDIR)/db/seed/*.sql; do \
+		psql "${DB_URL}" -v ON_ERROR_STOP=1 -f "$$file"; \
+	done
 
 docker-build:
 	@docker build -t ${APP_NAME} .

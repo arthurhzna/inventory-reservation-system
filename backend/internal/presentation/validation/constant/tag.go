@@ -8,4 +8,5 @@ const (
 	TagTimeFormat  = "time_format"
 	TagOneOf       = "one_of"
 	TagGreaterThan = "greater_than"
+	TagUUID        = "uuid"
 )

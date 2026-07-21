@@ -17,5 +17,10 @@ func ConfirmReservationRules(
 			constant.InventoryReservationIDField,
 			req.ReservationID,
 		),
+
+		rule.UUID(
+			constant.InventoryReservationIDField,
+			req.ReservationID,
+		),
 	}
 }

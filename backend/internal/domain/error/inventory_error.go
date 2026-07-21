@@ -4,7 +4,7 @@ import "errors"
 
 var (
 	ErrInventoryNotFound = errors.New(
-		"inventory not found",
+		"inventory item",
 	)
 
 	ErrInsufficientStock = errors.New(

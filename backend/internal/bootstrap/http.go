@@ -124,7 +124,7 @@ func RegisterRoutesInventory(
 		)
 
 		inventory.GET(
-			"/:item_id",
+			"/stock",
 			inventoryController.GetStock,
 		)
 

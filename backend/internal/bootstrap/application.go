@@ -10,6 +10,7 @@ import (
 
 type Application struct {
 	HttpServer *HttpServer
+	Worker     *Worker
 }
 
 func NewApplication() *Application {
@@ -43,7 +44,12 @@ func NewApplication() *Application {
 		controller,
 	)
 
+	worker := NewWorker(
+		useCase,
+	)
+
 	return &Application{
 		HttpServer: httpServer,
+		Worker:     worker,
 	}
 }

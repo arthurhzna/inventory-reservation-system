@@ -88,7 +88,7 @@ func (c *InventoryController) Confirm(ctx *gin.Context) {
 
 func (c *InventoryController) GetStock(ctx *gin.Context) {
 
-	itemID := ctx.Param("item_id")
+	itemID := ctx.Query("item_id")
 
 	res, err := c.inventoryUseCase.GetStock(
 		ctx.Request.Context(),

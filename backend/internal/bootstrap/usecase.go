@@ -3,13 +3,12 @@ package bootstrap
 import (
 	"github.com/arthurhzna/inventory-reservation-system/backend/internal/application/usecase"
 
-	servicedomain "github.com/arthurhzna/inventory-reservation-system/backend/internal/domain/service"
-
 	repositorydomain "github.com/arthurhzna/inventory-reservation-system/backend/internal/domain/repository"
+	servicedomain "github.com/arthurhzna/inventory-reservation-system/backend/internal/domain/service"
 )
 
 type UseCase struct {
-	UserUseCase usecase.UserUseCaseInterface
+	InventoryUseCase usecase.InventoryUseCaseInterface
 }
 
 func NewUseCase(
@@ -18,7 +17,7 @@ func NewUseCase(
 ) *UseCase {
 
 	return &UseCase{
-		UserUseCase: usecase.NewUserUseCase(
+		InventoryUseCase: usecase.NewInventoryUseCase(
 			uow,
 			uuidGenerator,
 		),

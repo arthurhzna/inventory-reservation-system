@@ -12,11 +12,4 @@ const (
 	NotFoundErrorMessage           = "%s not found"
 	ConflictErrorMessage           = "%s already exists"
 	BadRequestErrorMessage         = "%s is invalid"
-
-	InventoryNotFoundErrorMessage           = "inventory item not found"
-	ReservationNotFoundErrorMessage         = "reservation not found"
-	InsufficientStockErrorMessage           = "insufficient available stock"
-	ReservationExpiredErrorMessage          = "reservation has expired"
-	ReservationAlreadyConfirmedErrorMessage = "reservation has already been confirmed"
-	InvalidReservationStatusErrorMessage    = "invalid reservation status"
 )
