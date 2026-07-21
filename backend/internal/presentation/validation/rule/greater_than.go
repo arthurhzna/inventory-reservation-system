@@ -15,7 +15,7 @@ func GreaterThan(
 
 	return func() core.FieldError {
 
-		if value <= min {
+		if value < min {
 
 			return core.NewValidationError(
 				field,
