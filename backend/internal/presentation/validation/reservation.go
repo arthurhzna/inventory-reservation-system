@@ -7,15 +7,15 @@ import (
 	"github.com/arthurhzna/inventory-reservation-system/backend/internal/presentation/validation/rule"
 )
 
-func CreateDeviceRules(
-	req *request.CreateDeviceRequest,
+func ConfirmReservationRules(
+	req *request.ConfirmReservationRequest,
 ) []core.Rule {
 
 	return []core.Rule{
 
 		rule.RequiredString(
-			constant.DeviceNameField,
-			req.Name,
+			constant.InventoryReservationIDField,
+			req.ReservationID,
 		),
 	}
 }
