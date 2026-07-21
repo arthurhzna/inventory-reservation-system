@@ -37,7 +37,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-
+          
   backend:
     build:
       context: ./backend
@@ -52,7 +52,10 @@ services:
         condition: service_healthy
 
     env_file:
-      - ./backend/.env
+      - ./.env
+
+    volumes:
+      - ./.env:/.env:ro
 
   frontend:
     build:
@@ -65,6 +68,9 @@ services:
 
     depends_on:
       - backend
+
+    env_file:
+      - ./.env
 
 volumes:
   postgres_data:
