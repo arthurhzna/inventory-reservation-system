@@ -38,5 +38,33 @@ services:
       postgres:
         condition: service_healthy
 
+  backend:
+    build:
+      context: ./backend
+
+    container_name: backend
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    env_file:
+      - ./backend/.env
+
+  frontend:
+    build:
+      context: ./frontend
+
+    container_name: frontend
+
+    ports:
+      - "3000:80"
+
+    depends_on:
+      - backend
+
 volumes:
   postgres_data:
