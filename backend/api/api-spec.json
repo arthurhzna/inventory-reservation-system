@@ -1,0 +1,20 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Inventory Reservation System",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000"
+    }
+  ],
+  "tags": [],
+  "paths": {},
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "parameters": {}
+  }
+}
