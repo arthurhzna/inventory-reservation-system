@@ -1,5 +1,6 @@
 package policy
 
 const (
-	MinQuantity = 1
+	ReservationExpirationMinutes = 5
+	MinQuantity                  = 1
 )

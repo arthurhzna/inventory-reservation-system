@@ -37,7 +37,11 @@ func NewHTTPServer(
 	RegisterRoutesApp(router, controller.AppController)
 
 	api := NewApiGroup(router)
-	RegisterRoutesAuth(api, controller.UserController, cfg.HttpServer.ApiKey)
+
+	RegisterRoutesInventory(
+		api,
+		controller.InventoryController,
+	)
 
 	return &HttpServer{
 		cfg: cfg,
@@ -99,25 +103,34 @@ func NewApiGroup(router *gin.Engine) *gin.RouterGroup {
 	return router.Group("/api/v1")
 }
 
-func RegisterRoutesAuth(
+func RegisterRoutesInventory(
 	api *gin.RouterGroup,
-	userController *controller.UserController,
-	apiKey string,
+	inventoryController *controller.InventoryController,
 ) {
 
-	auth := api.Group(
-		"/auth",
+	inventory := api.Group(
+		"/inventory",
 	)
 
 	{
-		auth.POST(
-			"/login",
-			userController.Login,
+		inventory.POST(
+			"/reserve",
+			inventoryController.Reserve,
 		)
 
-		auth.POST(
-			"/register",
-			userController.Register,
+		inventory.POST(
+			"/confirm",
+			inventoryController.Confirm,
+		)
+
+		inventory.GET(
+			"/:item_id",
+			inventoryController.GetStock,
+		)
+
+		inventory.GET(
+			"",
+			inventoryController.ListInventory,
 		)
 	}
 }

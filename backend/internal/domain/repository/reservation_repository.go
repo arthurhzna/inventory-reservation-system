@@ -17,6 +17,11 @@ type ReservationRepository interface {
 		reservationID string,
 	) (*entity.Reservation, error)
 
+	FindByReservationIDForUpdate(
+		ctx context.Context,
+		reservationID string,
+	) (*entity.Reservation, error)
+
 	FindExpiredActive(
 		ctx context.Context,
 		limit int,

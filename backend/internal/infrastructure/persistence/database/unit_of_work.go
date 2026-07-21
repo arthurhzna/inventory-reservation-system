@@ -58,6 +58,10 @@ func (u *unitOfWork) WithTransaction(
 	return tx.Commit()
 }
 
-func (u *unitOfWork) UserRepository() repositoryiface.UserRepository {
-	return repositories.NewUserRepository(u.db)
+func (u *unitOfWork) InventoryRepository() repositoryiface.InventoryRepository {
+	return repositories.NewInventoryRepository(u.db)
+}
+
+func (u *unitOfWork) ReservationRepository() repositoryiface.ReservationRepository {
+	return repositories.NewReservationRepository(u.db)
 }

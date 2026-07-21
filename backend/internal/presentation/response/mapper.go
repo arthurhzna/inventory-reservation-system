@@ -6,22 +6,24 @@ import (
 
 func MapError(err error) error {
 	switch err {
-	case errordomain.ErrEmailAlreadyExist:
+
+	case errordomain.ErrInventoryNotFound:
+		return NewNotFoundError(err)
+
+	case errordomain.ErrReservationNotFound:
+		return NewNotFoundError(err)
+
+	case errordomain.ErrInsufficientStock:
 		return NewConflictError(err)
 
-	case errordomain.ErrInvalidCredential:
-		return NewUnauthorizedError(err)
+	case errordomain.ErrReservationExpired:
+		return NewConflictError(err)
 
-	case errordomain.ErrInvalidRole:
-		return NewBadRequestError(err)
+	case errordomain.ErrReservationAlreadyConfirmed:
+		return NewConflictError(err)
 
-	case errordomain.ErrForbidden:
-		return NewForbiddenError(err)
-
-	case errordomain.ErrUserNotFound,
-		errordomain.ErrEmailNotFound,
-		errordomain.ErrDeviceNotFound:
-		return NewNotFoundError(err)
+	case errordomain.ErrInvalidReservationStatus:
+		return NewConflictError(err)
 	}
 
 	return err

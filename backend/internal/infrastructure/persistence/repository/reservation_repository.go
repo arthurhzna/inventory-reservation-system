@@ -123,6 +123,58 @@ func (r *reservationRepository) FindByReservationID(
 	return &reservation, nil
 }
 
+func (r *reservationRepository) FindByReservationIDForUpdate(
+	ctx context.Context,
+	reservationID string,
+) (*entity.Reservation, error) {
+
+	query := `
+		SELECT
+			id,
+			reservation_id,
+			inventory_id,
+			user_id,
+			quantity,
+			status,
+			expires_at,
+			confirmed_at,
+			created_at,
+			updated_at
+		FROM reservations
+		WHERE reservation_id = $1
+		FOR UPDATE
+	`
+
+	var reservation entity.Reservation
+
+	err := r.db.QueryRowxContext(
+		ctx,
+		query,
+		reservationID,
+	).Scan(
+		&reservation.ID,
+		&reservation.ReservationID,
+		&reservation.InventoryID,
+		&reservation.UserID,
+		&reservation.Quantity,
+		&reservation.Status,
+		&reservation.ExpiresAt,
+		&reservation.ConfirmedAt,
+		&reservation.CreatedAt,
+		&reservation.UpdatedAt,
+	)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &reservation, nil
+}
+
 func (r *reservationRepository) FindExpiredActive(
 	ctx context.Context,
 	limit int,
